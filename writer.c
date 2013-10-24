@@ -11,16 +11,16 @@
 int numberOfWriters; /*Cantidad de procesos writers.*/
 
 int sleepTime; 	 /*Tiempo en que duerme un proceso cuando no está 
-				   escribiendo en milisegundos.*/
+				   escribiendo en segundos.*/
 
 int writeTime; 	 /*Tiempo que se le asigna a un proceso para que 
-				   escriba en la memoria compartida, milisegundos*/
+				   escriba en la memoria compartida, segundos*/
 
 //int status;
 
 void main(int argc, char *argv[])
 {
-	/*Se esperan 3 parámetros además del del programa a ejecutar*/
+	/*Se esperan 3 parámetros además el del programa a ejecutar*/
 	if (argc == 4)
 	{
 		numberOfWriters = atoi(argv[1]);
@@ -32,12 +32,12 @@ void main(int argc, char *argv[])
 		for (i = 0; i < numberOfWriters; i++)
 		{
 			pid = fork();
-			if (pid == -1)
+			if (pid == -1) /*Error*/
 			{
 				printf("Error creando proceso\n");
 				break;
 			}
-			if (pid == 0)
+			if (pid == 0) /*Child*/
 			{
 				printf("Proceso hijo: %d PID: %d\n",i, getpid());
 				/*Código del writer*/
