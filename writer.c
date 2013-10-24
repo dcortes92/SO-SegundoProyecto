@@ -6,29 +6,55 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-/*Parámetros para el Writer, el primer parámetro es obligatorio. En
-  caso de que no se especifiquen los otros dos se asumen valores por
-  defecto.*/
+/*Parámetros para el Writer, todos son obligatorios.*/
 
 int numberOfWriters; /*Cantidad de procesos writers.*/
 
-int sleepTime = 100; /*Tiempo en que duerme un proceso cuando no está 
+int sleepTime; 	 /*Tiempo en que duerme un proceso cuando no está 
 				   escribiendo en milisegundos.*/
 
-int writeTime = 100; /*Tiempo que se le asigna a un proceso para que 
+int writeTime; 	 /*Tiempo que se le asigna a un proceso para que 
 				   escriba en la memoria compartida, milisegundos*/
 
-int main(int argc, char *argv[])
+//int status;
+
+void main(int argc, char *argv[])
 {
-	int count = argc;
-	printf("The number of arguments passed is %d\n", count);
-	
-	int c = 0;
-	while(c < count)
+	/*Se esperan 3 parámetros además del del programa a ejecutar*/
+	if (argc == 4)
 	{
-		printf("The argument [%d] is : [%s]\n", c+1, argv[c]);
-		c++;
+		numberOfWriters = atoi(argv[1]);
+		sleepTime = atoi(argv[2]);
+		writeTime = atoi(argv[3]);
+		
+		int i;
+		pid_t pid;
+		for (i = 0; i < numberOfWriters; i++)
+		{
+			pid = fork();
+			if (pid == -1)
+			{
+				printf("Error creando proceso\n");
+				break;
+			}
+			if (pid == 0)
+			{
+				printf("Proceso hijo: %d PID: %d\n",i, getpid());
+				/*Código del writer*/
+				
+				break;
+				/*Con wait se imprime diferente*/
+				//exit(0);
+			}
+		}
+		
+		/*for (i = 0; i < numberOfWriters; i++) {
+    			pid = wait(&status);
+    			printf("Child (pid = %d) exited with status %d.\n", pid, status);
+  		}*/
 	}
-	
-	return 0;
+	else
+	{
+		printf("Faltan parámetros para iniciar el programa.\n");
+	}
 }
