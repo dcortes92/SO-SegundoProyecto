@@ -1,8 +1,4 @@
-
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <stdio.h>
+#include "librerias.h"
 
 
 int main()
