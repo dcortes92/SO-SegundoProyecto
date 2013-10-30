@@ -15,7 +15,6 @@ int main()
 	*/
 	key = 1234;
 	
-	
     if (shmdt(shm) == -1) {
         fprintf(stderr, "shmdt failed\n");
         return -1;
