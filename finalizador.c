@@ -9,7 +9,6 @@ int main()
 	
 	key = 1234;
 	
-<<<<<<< HEAD
 	int num_lineas = 10;
 	int caracteres_linea = 2;
 	int tamanio_mem = num_lineas*(26+caracteres_linea);
@@ -27,8 +26,6 @@ int main()
         return -1;
     }
     
-=======
->>>>>>> 1b36db7ad4358cb23229c092d8b7384859926bb1
     if (shmdt(shm) == -1) {
         fprintf(stderr, "shmdt failed\n");
         return -1;
