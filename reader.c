@@ -5,10 +5,10 @@
 int numberOfReaders; /*Cantidad de procesos readers.*/
 
 int sleepTime; 	 /*Tiempo en que duerme un proceso cuando no está 
-				   escribiendo en segundos.*/
+				   leyendo en segundos.*/
 
-int writeTime; 	 /*Tiempo que se le asigna a un proceso para que 
-				   escriba en la memoria compartida, segundos */
+int readTime; 	 /*Tiempo que se le asigna a un proceso para que 
+				   lea en la memoria compartida, segundos */
 
 //int status;
 
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	{
 		numberOfReaders = atoi(argv[1]);
 		sleepTime = atoi(argv[2]);
-		writeTime = atoi(argv[3]);
+		readTime = atoi(argv[3]);
 		
 		int i;
 		pid_t pid;
@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
 					   j++;
 					}
 					printf("\n\n");
+					sleep(readTime);
 				}
 				return 0;
 				/*Con wait se imprime diferente*/

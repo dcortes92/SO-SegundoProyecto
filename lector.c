@@ -8,8 +8,6 @@ main()
     key_t key;
     char *shm, *s;
 
-    int *shm1;
-
     /*
      * We need to get the segment named
      * "5678", created by the server.
