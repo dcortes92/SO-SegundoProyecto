@@ -1,4 +1,4 @@
-#include "librerias.h"
+	#include "librerias.h"
 
 /*Parámetros para el Reader, todos son obligatorios.*/
 
@@ -49,8 +49,7 @@ int main(int argc, char *argv[])
 					key = 1234;
 
 					int num_lineas = 10;
-					int caracteres_linea = 2;
-					int tamanio_mem = num_lineas*(26+caracteres_linea);
+					int tamanio_mem = num_lineas*30 + 1;
 					/*
 					* Locate the segment.
 					*/
@@ -67,25 +66,38 @@ int main(int argc, char *argv[])
 					   return -1;
 					}
 
-					/*
-					* Now read what the server put in the memory.
-					*/
-					//s = shm;
-					
-					int j = 0;
-					
-					for (s = shm; *s != NULL; s++)
+
+					s = 0;			
+					if (*s == '0')
 					{
-					   if (j == 28)
-					   {
-						  j = 0;
-						  printf("\n");
-					   }
-					   putchar(*s);
-					   j++;
+						int i = 0;
+						int j = 0;
+						char linea[30];
+						
+						for (s = (shm + 1); *s != NULL; s++)
+						{
+							if (j == 30)
+							{
+								j = 0;
+								if(linea[0] != 'X')
+								{
+									sleepTime(readTime);
+									printf("%s\n", linea);
+									i++;
+								}
+							}
+							linea[i] = *s;
+							//putchar(*s);
+							j++;
+						}
+						printf("\n\n");
+						sleep(sleepTime);
 					}
-					printf("\n\n");
-					sleep(readTime);
+					else
+					{
+						sleep(sleepTime);
+					}
+					
 				}
 				return 0;
 				/*Con wait se imprime diferente*/

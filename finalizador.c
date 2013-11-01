@@ -10,8 +10,7 @@ int main()
 	key = 1234;
 	
 	int num_lineas = 10;
-	int caracteres_linea = 2;
-	int tamanio_mem = num_lineas*(26+caracteres_linea);
+	int tamanio_mem = num_lineas*30 + 1;
 	
 	if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
         perror("shmget");

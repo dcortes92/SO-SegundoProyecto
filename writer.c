@@ -12,7 +12,7 @@ int writeTime; 	 /*Tiempo que se le asigna a un proceso para que
 
 //int status;
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	/*Se esperan 3 parámetros además el del programa a ejecutar*/
 	if (argc == 4)
@@ -34,11 +34,70 @@ void main(int argc, char *argv[])
 			if (pid == 0) /*Child*/
 			{
 				printf("Proceso hijo: %d PID: %d\n",i, getpid());
-				/*Código del writer*/
+
+				int shmid;
+				key_t key;
+				char *shm, *s;
+
+				if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
+						   perror("shmget");
+						   return -1;
+						}
+
+				/*
+				* Now we attach the segment to our data space.
+				*/
+				if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
+				   perror("shmat");
+				   return -1;
+				}
+
+				while(1)
+				{		
+					s = 0;			
+					if (*s == '0')
+					{
+						/*SE SOLICITA EL SEMAFORO*/
+						*s = '1';
+						printf("***** Proceso %d leyendo ******\n\n", getpid());
+						
+						/*
+						* We need to get the segment named
+						* "5678", created by the server.
+						*/
+						key = 1234;
+
+						int num_lineas = 10;
+						int tamanio_mem = num_lineas*30 + 1;
 				
-				break;
-				/*Con wait se imprime diferente*/
-				//exit(0);
+						int j = 0;
+						char linea[30];
+						
+						for (s = (shm + 1); *s != NULL; s++)
+						{
+							if (*s == 'X')
+							{
+							    *s = 'R';
+							    /*ESCRIBIR LA LINEA*/
+							    sleepTime(writeTime);
+							}
+							else
+							{
+								j++;
+								s += 30;
+							}
+						}
+						/*SE LIBERA EL SEMAFORO*/
+						s = 0;
+						*s = '0';
+						printf("\n\n");
+						sleep(sleepTime);
+					}
+					else
+					{
+						sleep(sleepTime);
+					}					
+				}
 			}
 		}
 		
@@ -50,5 +109,31 @@ void main(int argc, char *argv[])
 	else
 	{
 		printf("Faltan parámetros para iniciar el programa.\n");
+	}
+}
+
+void agregarCeros(int numeroLinea)
+{
+	int cantidadLineas = 10;
+	int i = 0;
+	while(cantidadLineas != 0)
+	{
+		i++;
+		cantidadLineas = cantidadLineas/10;
+	}
+
+	int j = 0;
+	while(numeroLinea != 0)
+	{
+		j++;
+		numeroLinea = numeroLinea/10;
+	}	
+
+	int diferencia = i - j;
+
+	char numero[diferencia];
+	for (i = 0; i < diferencia; ++i)
+	{
+		numero[i] = '0';
 	}
 }
