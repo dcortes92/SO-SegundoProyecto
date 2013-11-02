@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 				printf("Error creando proceso\n");
 				break;
 			}
-			if (pid == 0) /*Child*/
+			if (pid == 0) /*Se creó un proceso hijo*/
 			{
 				while(1)
 				{
@@ -42,25 +42,19 @@ int main(int argc, char *argv[])
 
 					int *shm1;
 
-					/*
-					* We need to get the segment named
-					* "5678", created by the server.
-					*/
+					/* Obtenemos el segmento llamado 1234 creado por el inicializador */
 					key = 1234;
 
 					int num_lineas = 10;
 					int tamanio_mem = num_lineas*30 + 1;
-					/*
-					* Locate the segment.
-					*/
+					
+					/* Se localiza el segmento */
 					if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
 					   perror("shmget");
 					   return -1;
 					}
 
-					/*
-					* Now we attach the segment to our data space.
-					*/
+					/* Se adjunta el segmento al espacio de memoria */
 					if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
 					   perror("shmat");
 					   return -1;

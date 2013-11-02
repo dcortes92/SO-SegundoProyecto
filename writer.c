@@ -57,14 +57,11 @@ int main(int argc, char *argv[])
 					s = 0;			
 					if (*s == '0')
 					{
-						/*SE SOLICITA EL SEMAFORO*/
+						/* Se pide el semáforo */
 						*s = '1';
 						printf("***** Proceso %d leyendo ******\n\n", getpid());
 						
-						/*
-						* We need to get the segment named
-						* "5678", created by the server.
-						*/
+						/* Nombre del segmento de memoria compartida */
 						key = 1234;
 
 						int num_lineas = 10;
@@ -75,11 +72,11 @@ int main(int argc, char *argv[])
 						
 						for (s = (shm + 1); *s != NULL; s++)
 						{
-							if (*s == 'X')
+							if (*s == 'X') 
 							{
 							    *s = 'R';
-							    /*ESCRIBIR LA LINEA*/
-							    sleepTime(writeTime);
+							    /*Se escribe la línea*/
+							    sleep(writeTime);
 							}
 							else
 							{
@@ -87,7 +84,8 @@ int main(int argc, char *argv[])
 								s += 30;
 							}
 						}
-						/*SE LIBERA EL SEMAFORO*/
+						
+						/*Se devuelve el semáforo*/
 						s = 0;
 						*s = '0';
 						printf("\n\n");
