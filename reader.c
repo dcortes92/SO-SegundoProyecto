@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 								j = 0;
 								if(linea[0] != 'X')
 								{
-									sleepTime(readTime);
+									sleep(readTime);
 									printf("%s\n", linea);
 									i++;
 								}

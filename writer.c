@@ -38,6 +38,12 @@ int main(int argc, char *argv[])
 				int shmid;
 				key_t key;
 				char *shm, *s;
+				
+				/* Obtenemos el segmento llamado 1234 creado por el inicializador */
+				key = 1234;
+
+				int num_lineas = 10;
+				int tamanio_mem = num_lineas*30 + 1;
 
 				if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
 						   perror("shmget");
