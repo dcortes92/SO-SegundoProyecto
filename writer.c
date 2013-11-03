@@ -12,7 +12,10 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 int writeTime;          /*Tiempo que se le asigna a un proceso para que
                                  escriba en la memoria compartida, segundos*/
 
+<<<<<<< HEAD
 pid_t pid;
+=======
+>>>>>>> b54612649b0623d434901e30419e3f0eb9490ba0
 int shmid;
 key_t key;
 char *shm, *s;
@@ -66,6 +69,11 @@ int main(int argc, char *argv[])
 			    	return -1;
                 }
 
+                FILE *file;
+                file = fopen("PIDs.txt", "a+");
+                fprintf(file, "%d\n", getpid());
+                fclose(file);
+
                 while(1)
                 {                
                     s = shm;            
@@ -91,6 +99,19 @@ int main(int argc, char *argv[])
                                 procesar_pid(pid_f);
                                 procesar_fecha();
 
+                                time_t t = time(NULL);
+                                struct tm tm = *localtime(&t);
+                                int mes  = tm.tm_mon + 1;
+                                int dia  = tm.tm_mday;
+                                int hora = tm.tm_hour;
+                                int min  = tm.tm_min;
+                                int seg  = tm.tm_sec;
+
+                                file = fopen("Bitacora.txt", "a+");
+                                fprintf(file, "%d escribiendo el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
+                                fclose(file);
+                                printf("\n\n"); 
+
                              	sleep(writeTime);
                                 break;
                             }
@@ -105,7 +126,27 @@ int main(int argc, char *argv[])
                         *s = '0';
                         printf("\n\n");
                         sleep(sleepTime);
+<<<<<<< HEAD
                     }               
+=======
+                    }                
+                    else
+                    {
+                        time_t t = time(NULL);
+                        struct tm tm = *localtime(&t);
+                        int mes  = tm.tm_mon + 1;
+                        int dia  = tm.tm_mday;
+                        int hora = tm.tm_hour;
+                        int min  = tm.tm_min;
+                        int seg  = tm.tm_sec;
+
+                        file = fopen("Bitacora.txt", "a+");
+                        fprintf(file, "%d bloqueado el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
+                        fclose(file);
+                        printf("Zona critica en uso\n\n");
+                        sleep(sleepTime);
+                    }                               
+>>>>>>> b54612649b0623d434901e30419e3f0eb9490ba0
                 }
             }
         }

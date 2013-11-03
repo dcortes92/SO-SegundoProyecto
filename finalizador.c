@@ -44,4 +44,19 @@ int main()
         fprintf(stderr, "shmctl(IPC_RMID) failed\n");
         return -1;
     }
+
+    FILE *file;
+    file = fopen("PIDs.txt", "r");
+
+    char cpid[4];
+    while(fscanf(file, "%s", cpid) != EOF)
+    {
+        int pid = atoi(cpid);
+        printf("%d\n", pid);
+        kill(pid, SIGTERM);
+        kill(pid, SIGKILL);
+    }
+
+    fclose(file);
+
 }
