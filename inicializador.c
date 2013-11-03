@@ -54,14 +54,6 @@ int crearMemoria()
     for (i = 1; i < tamanio_mem; i++)
         *s++ = 'X';
 
-	*s = '0';
-	s++;
-    int i;
-    for (i = 0; i < tamanio_mem; i++)
-    	if( i == tamanio_mem)
-    		*s++ = '\0';	
-    	else
-        	*s++ = 'X';
 }
 
 int crearMemoriaEspia()

@@ -12,9 +12,15 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 int writeTime;          /*Tiempo que se le asigna a un proceso para que
                                  escriba en la memoria compartida, segundos*/
 
-void procesar_linea(char *s, int numeroLinea);
-void procesar_pid(char *s, int pid);
-void procesar_fecha(char *s);
+
+int shmid;
+key_t key;
+char *shm, *s;
+
+
+void procesar_linea(int numeroLinea);
+void procesar_pid(int pid);
+void procesar_fecha();
 
 //int status;
 
@@ -41,9 +47,7 @@ int main(int argc, char *argv[])
             {
                 printf("Proceso hijo: %d PID: %d\n",i, getpid());
 
-                int shmid;
-                key_t key;
-                char *shm, *s;
+                
                 
                 key = 1234;
 
@@ -70,7 +74,6 @@ int main(int argc, char *argv[])
                     {
                         /*SE SOLICITA EL SEMAFORO*/
                         *s = '1';
-                        printf("El semaforo ya es mio\n");
         
                         int j = 0;
                         char linea[30];
@@ -81,11 +84,12 @@ int main(int argc, char *argv[])
                             {
                                 printf("****** Proceso %d escribiendo ******\n\n", getpid());
 
-                                procesar_linea(s, j);                             	
+                                procesar_linea(j);                             	
 
-                                procesar_pid(s, getpid());
+                                int pid_f = getpid();
+                                procesar_pid(pid_f);
 
-                                procesar_fecha(s);
+                                procesar_fecha();
 
                              	sleep(writeTime);
                                 break;
@@ -99,7 +103,6 @@ int main(int argc, char *argv[])
                         /*SE LIBERA EL SEMAFORO*/
                         s = shm;
                         *s = '0';
-                        printf("El semaforo ya es libre\n");
                         printf("\n\n");
                         sleep(sleepTime);
                     }                                       
@@ -118,15 +121,17 @@ int main(int argc, char *argv[])
     }
 }
 
-void procesar_linea(char *s, int numeroLinea)
+void procesar_linea(int j)
 {
-    int x1 = numeroLinea / 100;
+    int x1 = j / 100;
+    int xn1 = j - 100*x1;
 
-    int nuevo = numeroLinea - 100*x1;
-    int x2 = nuevo / 10;
+    int x2 = xn1 / 10;
+    int xn2 = xn1 - 10*x2;
 
-    nuevo = nuevo - 10*x2;
-    int x3 = nuevo;
+    int x3 = xn2;
+
+    printf("%d%d%d. ", x1, x2, x3);
 
     *s++ = '#';
     *s++ = x1 + 48;
@@ -136,7 +141,7 @@ void procesar_linea(char *s, int numeroLinea)
     *s++ = ' ';
 }
 
-void procesar_pid(char *s, int pid)
+void procesar_pid(int pid)
 {
     int x1 = pid / 1000;
     int xn1 = pid - 1000*x1;
@@ -149,6 +154,8 @@ void procesar_pid(char *s, int pid)
     
     int x4 = xn3;
 
+    printf("%d%d%d%d ", x1, x2, x3, x4);
+
     *s++ = x1 + 48;
     *s++ = x2 + 48;
     *s++ = x3 + 48;
@@ -156,7 +163,7 @@ void procesar_pid(char *s, int pid)
     *s++ = ' ';
 }
 
-void procesar_fecha(char *s)
+void procesar_fecha()
 {
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
@@ -166,7 +173,6 @@ void procesar_fecha(char *s)
     int hora = tm.tm_hour;
     int min  = tm.tm_min;
     int seg  = tm.tm_sec;
-
 
     /*AGREGAR EL DIA*/
     int d1 = dia / 10;
@@ -189,7 +195,7 @@ void procesar_fecha(char *s)
 
     /*AGREGAR EL HORA*/
     int h1 = hora / 10;
-    int h2 = hora - 10*m1;
+    int h2 = hora - 10*h1;
     *s++ = h1 + 48;
     *s++ = h2 + 48;
     *s++ = ':';
@@ -206,5 +212,6 @@ void procesar_fecha(char *s)
     int s2 = seg - 10*s1;
     *s++ = s1 + 48;
     *s++ = s2 + 48;
-    *s++ = ' ';
+
+    printf("%d%d-%d%d-2013 %d%d:%d%d:%d%d\n", d1, d2, m1, m2, h1, h2, min1, min2, s1, s2);
 }

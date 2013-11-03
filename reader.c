@@ -75,11 +75,10 @@ int main(int argc, char *argv[])
                         {
                             if (j == 30)
                             {
-                            	printf("\nj = 30\n");
                                 j = 0;
                                 if(linea[0] != 'X')
                                 {
-                                	printf("****** Proceso %d leyendo ******\n\n", getpid());
+                                	printf("****** Proceso %d leyendo ******\n", getpid());
                                 	int i;
 									for (i = 0; i < 30; i++)
 									{
@@ -88,12 +87,15 @@ int main(int argc, char *argv[])
 											putchar(linea[i]);
 										}
 									}
-									printf("\n");
-                                    sleep(readTime);
+									printf("\n\n");                                    
                                 }
+                                sleep(readTime);
                             }
-                            linea[j] = *s;
-                            j++;
+                            else
+                            {
+	                            linea[j] = *s;
+	                            j++;
+                            }
                         }
                         printf("\n\n");
                         sleep(sleepTime);
