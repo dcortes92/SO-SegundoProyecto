@@ -66,7 +66,7 @@ int estadoMemoria()
     key = 1234;
 
     int num_lineas = 10;
-    int tamanio_mem = num_lineas*30 + 1;
+    int tamanio_mem = num_lineas*30 + 2;
     /*
     * Se localiza el segmento.
     */
@@ -84,29 +84,21 @@ int estadoMemoria()
     }
     
     /* Se imprime el contenido de la memoria en formato entendible */
-    int j = 0;
-    char linea[30];
+    int contador = 0;     
     
-    for (s = shm + 1; *s != NULL; s++)
+    for (s = shm + 1; *s != '\0'; s++)
     {
-        if (j == 30)
-        {
-            j = 0;	
-			int i;
-			for (i = 0; i < 30; i++)
-			{
-				putchar(linea[i]);
-			}
+		if(contador == 30)
+		{
 			printf("\n");
-        }
-        else
-        {
-            linea[j] = *s;
-            j++;
-        }
+			contador = 0;
+		}
+		else
+		{
+			putchar(*s);	    
+	    	contador++;
+		}        
     }
-    
-    printf("\n\n");
 }
 
 int estadoReaders(int esEgoista)

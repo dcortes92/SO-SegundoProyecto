@@ -21,6 +21,7 @@ char *shm, *s;
 void procesar_linea(int numeroLinea);
 void procesar_pid(int pid);
 void procesar_fecha();
+void actualizar_espia(int pid, char tipo, char estado, int flagArchivo);
 
 //int status;
 
@@ -46,13 +47,11 @@ int main(int argc, char *argv[])
             if (pid == 0) /*Child*/
             {
                 printf("Proceso hijo: %d PID: %d\n",i, getpid());
-
-                
                 
                 key = 1234;
 
                 int num_lineas = 10;
-                int tamanio_mem = num_lineas*30 + 1;
+                int tamanio_mem = num_lineas*30 + 2;
 
                 if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
                      perror("shmget");
@@ -78,13 +77,16 @@ int main(int argc, char *argv[])
                         int j = 0;
                         char linea[30];
                         
-                        for (s = shm + 1; *s != NULL; s++)
+                        for (s = shm + 1; *s != '\0'; s++)
                         {
                             if (*s == 'X')
                             {
                                 printf("****** Proceso %d escribiendo ******\n\n", getpid());
+                                
+                                /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
+                                actualizar_espia(getpid(), 'w', 'a', 1);
 
-                                procesar_linea(j);                             	
+                                procesar_linea(j);       	
 
                                 int pid_f = getpid();
                                 procesar_pid(pid_f);
@@ -214,4 +216,36 @@ void procesar_fecha()
     *s++ = s2 + 48;
 
     printf("%d%d-%d%d-2013 %d%d:%d%d:%d%d\n", d1, d2, m1, m2, h1, h2, min1, min2, s1, s2);
+}
+
+
+void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
+{
+	int shmid;
+	key_t key;
+	char *shm, *s;
+	/*
+	* Obtenemos el segmento llamado
+	* "5678", creado por el inicializador.
+	*/
+	key = 5678;
+
+	int num_lineas = 10;
+	int tamanio_mem = num_lineas*30 + 2;
+
+	/*
+	* Se localiza el segmento.
+	*/
+	if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
+		perror("shmget");
+		return;
+	}
+
+	/*
+	* Se adjunta el segmento al espacio de datos en memoria.
+	*/
+	if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
+		perror("shmat");
+		return;
+	}
 }

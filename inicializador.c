@@ -3,13 +3,23 @@
 /* Memoria compartida */
 int crearMemoria(void);
 /* Memoria compartida del espia */
-int crearMemoriaEspia(void);
+int crearMemoriaEspia(int cantidadProcesos);
 
-
-void main()
+void main(int argc, char *argv[])
 {
-    crearMemoria();
-	//crearMemoriaEspia();
+	/*Se espera 1 parámetro además del programa a ejecutar
+	  para determinar el tamaño de la memoria compartida para
+	  el espía*/
+	if(argc == 2) 
+	{	
+		crearMemoria();
+		int cantidadProcesos = atoi(argv[1]);
+		//crearMemoriaEspia(cantidadProcesos);	
+	}
+	else
+	{
+		printf("Faltan parámetros para iniciar el programa.\n");
+	}
 }
 
 int crearMemoria()
@@ -53,12 +63,16 @@ int crearMemoria()
     *s = '0';
     s++;
     int i;
-    for (i = 1; i < tamanio_mem; i++)
-        *s++ = 'X';
-
+    for (i = 1; i <= tamanio_mem; i++){
+        if( i == tamanio_mem)
+    		*s++ = '\0';	
+    	else
+        	*s++ = 'X';
+    }
 }
 
-int crearMemoriaEspia() /*Esta memoria sirve para que los demás procesos escriban en ella y el espia sepa que estan haciendo*/
+/*Esta memoria sirve para que los demás procesos escriban en ella y el espia sepa que estan haciendo*/
+int crearMemoriaEspia(int cantidadProcesos) 
 {
 	char c;
     int shmid;
@@ -71,8 +85,7 @@ int crearMemoriaEspia() /*Esta memoria sirve para que los demás procesos escrib
 	*/
     key = 5678;
 
-    int num_lineas = 10;
-    int tamanio_mem = num_lineas*1000 + 2;
+    int tamanio_mem = cantidadProcesos*10 + 2;
     
     /*
 	* Se crea el segmento.
@@ -91,16 +104,17 @@ int crearMemoriaEspia() /*Esta memoria sirve para que los demás procesos escrib
     }
 
     /*
-	* Now put some things into the memory for the
-	* other process to read.
+	* Se llena la memoria con X para indicar que la memoria está
+	* vacía.
 	*/
     s = shm;
 	*s = '0';
 	s++;
     int i;
-    for (i = 0; i < tamanio_mem; i++)
+    for (i = 0; i < tamanio_mem; i++){
     	if( i == tamanio_mem)
     		*s++ = '\0';	
     	else
         	*s++ = 'X';
+    }
 }

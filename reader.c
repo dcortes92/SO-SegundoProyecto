@@ -10,8 +10,6 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 int readTime;          /*Tiempo que se le asigna a un proceso para que
                                  lea en la memoria compartida, segundos */
 
-void imprimir_linea(char *linea);
-
 //int status;
 
 int main(int argc, char *argv[])
@@ -35,7 +33,6 @@ int main(int argc, char *argv[])
 		    }
 		    if (pid == 0) /*Child*/
 		    {
-		        
                 int shmid;
                 key_t key;
                 char *shm, *s;
@@ -46,7 +43,7 @@ int main(int argc, char *argv[])
                 key = 1234;
 
                 int num_lineas = 10;
-                int tamanio_mem = num_lineas*30 + 1;
+                int tamanio_mem = num_lineas*30 + 2;
                 
                 /*
                 * Se localiza el segmento.
@@ -73,7 +70,7 @@ int main(int argc, char *argv[])
                         int j = 0;
                         char linea[30];
                         
-                        for (s = shm + 1; *s != NULL; s++)
+                        for (s = shm + 1; *s != '\0'; s++)
                         {
                             if (j == 30)
                             {
@@ -117,13 +114,6 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		    printf("Faltan parámetros para iniciar el programa.\n");
+		printf("Faltan parámetros para iniciar el programa.\n");
 	}
-}
-
-
-void imprimir_linea(char *linea)
-{
-	
-	printf("\n");
 }
