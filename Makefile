@@ -1,4 +1,4 @@
-all: inicializador finalizador reader readerEgoista writer
+all: inicializador finalizador reader readerEgoista writer espia
 
 inicializador: inicializador.c
 	gcc -o inicializador inicializador.c
@@ -14,3 +14,6 @@ readerEgoista: readerEgoista.c
     
 writer: writer.c
 	gcc -o writer writer.c
+	
+espia: espia.c
+	gcc -o espia espia.c
