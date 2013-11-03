@@ -20,15 +20,16 @@ int crearMemoria()
     char *shm, *s;
 
     /*
-	* We'll name our shared memory segment
+	* Se nombrará al segmento de memoria compartida
 	* "1234".
 	*/
     key = 1234;
 
     int num_lineas = 10;
     int tamanio_mem = num_lineas*30 + 2;
+    
     /*
-	* Create the segment.
+	* Se crea el segmento.
 	*/
     if ((shmid = shmget(key, tamanio_mem, IPC_CREAT | 0666)) < 0) {
         perror("shmget");
@@ -36,7 +37,7 @@ int crearMemoria()
     }
 
     /*
-	* Now we attach the segment to our data space.
+	* Se adjunta el segmento al espacio de memoria de datos.
 	*/
     if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
         perror("shmat");
@@ -44,8 +45,9 @@ int crearMemoria()
     }
 
     /*
-	* Now put some things into the memory for the
-	* other process to read.
+	* Se ingresan datos al segmento
+	* primero se llena con X para indicarle a los demás que
+	* la memoria esta vacia 
 	*/
     s = shm;
     *s = '0';
@@ -56,7 +58,7 @@ int crearMemoria()
 
 }
 
-int crearMemoriaEspia()
+int crearMemoriaEspia() /*Esta memoria sirve para que los demás procesos escriban en ella y el espia sepa que estan haciendo*/
 {
 	char c;
     int shmid;
@@ -64,15 +66,16 @@ int crearMemoriaEspia()
     char *shm, *s;
 
     /*
-	* We'll name our shared memory segment
+	* Se nombará a esta segmento
 	* "5678".
 	*/
     key = 5678;
 
     int num_lineas = 10;
     int tamanio_mem = num_lineas*1000 + 2;
+    
     /*
-	* Create the segment.
+	* Se crea el segmento.
 	*/
     if ((shmid = shmget(key, tamanio_mem, IPC_CREAT | 0666)) < 0) {
         perror("shmget");
@@ -80,7 +83,7 @@ int crearMemoriaEspia()
     }
 
     /*
-	* Now we attach the segment to our data space.
+	* Se adjunta el segmento al espacio de memoria de datos
 	*/
     if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
         perror("shmat");
