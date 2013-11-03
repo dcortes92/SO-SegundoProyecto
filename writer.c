@@ -12,10 +12,7 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 int writeTime;          /*Tiempo que se le asigna a un proceso para que
                                  escriba en la memoria compartida, segundos*/
 
-<<<<<<< HEAD
 pid_t pid;
-=======
->>>>>>> b54612649b0623d434901e30419e3f0eb9490ba0
 int shmid;
 key_t key;
 char *shm, *s;
@@ -126,9 +123,6 @@ int main(int argc, char *argv[])
                         *s = '0';
                         printf("\n\n");
                         sleep(sleepTime);
-<<<<<<< HEAD
-                    }               
-=======
                     }                
                     else
                     {
@@ -146,7 +140,6 @@ int main(int argc, char *argv[])
                         printf("Zona critica en uso\n\n");
                         sleep(sleepTime);
                     }                               
->>>>>>> b54612649b0623d434901e30419e3f0eb9490ba0
                 }
             }
         }
