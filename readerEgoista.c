@@ -1,4 +1,5 @@
 #include "librerias.h"
+#include <time.h>
 
 /*Parámetros para el Reader, todos son obligatorios.*/
 
@@ -64,6 +65,11 @@ int main(int argc, char *argv[])
                  perror("shmat");
                  return -1;
                 }
+
+                FILE *file;
+                file = fopen("PIDs.txt", "a+");
+                fprintf(file, "%d\n", getpid());
+                fclose(file);
                 
                 /* Se imprime el contenido del segmento */
 	            while(1)
@@ -94,11 +100,36 @@ int main(int argc, char *argv[])
 											putchar(linea[i]);
 										}
 									}
+
+									time_t t = time(NULL);
+									struct tm tm = *localtime(&t);
+									int mes  = tm.tm_mon + 1;
+								    int dia  = tm.tm_mday;
+								    int hora = tm.tm_hour;
+								    int min  = tm.tm_min;
+								    int seg  = tm.tm_sec;
+
+									file = fopen("Bitacora.txt", "a+");
+					                fprintf(file, "%d egoista leyendo el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
+					                fclose(file);
+
 									s -= 30;
 									for (i = 0; i < 30; i++)
 									{
 										*s++ = 'X';
 									}
+
+									tm = *localtime(&t);
+									mes  = tm.tm_mon + 1;
+								    dia  = tm.tm_mday;
+								    hora = tm.tm_hour;
+								    min  = tm.tm_min;
+								    seg  = tm.tm_sec;
+
+									file = fopen("Bitacora.txt", "a+");
+					                fprintf(file, "%d egoista borrando lectura el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
+					                fclose(file);
+
 									printf("\n\n");
 									break;                                 
                                 }
@@ -115,6 +146,22 @@ int main(int argc, char *argv[])
                         *s = '0';
                         printf("\n\n");
                         sleep(sleepTime);
+	                }
+	                else
+	                {
+	                	time_t t = time(NULL);
+	                	struct tm tm = *localtime(&t);
+	                	int mes  = tm.tm_mon + 1;
+					    int dia  = tm.tm_mday;
+					    int hora = tm.tm_hour;
+					    int min  = tm.tm_min;
+					    int seg  = tm.tm_sec;
+
+	                	file = fopen("Bitacora.txt", "a+");
+		                fprintf(file, "%d egoista bloqueado el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
+		                fclose(file);
+		                printf("Zona critica en uso\n\n");
+		                sleep(sleepTime);
 	                }
 		                
 		        }

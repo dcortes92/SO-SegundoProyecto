@@ -1,3 +1,4 @@
+#include <time.h>
 #include "librerias.h"
 
 /*Parámetros para el Reader, todos son obligatorios.*/
@@ -9,6 +10,8 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 
 int readTime;          /*Tiempo que se le asigna a un proceso para que
                                  lea en la memoria compartida, segundos */
+
+FILE *file;
 
 //int status;
 
@@ -61,6 +64,11 @@ int main(int argc, char *argv[])
                  return -1;
                 }
 
+                FILE *file;
+                file = fopen("PIDs.txt", "a+");
+                fprintf(file, "%d\n", getpid());
+                fclose(file);
+
 				/* Se imprime el contenido del segmento */
 	            while(1)
 		        {
@@ -86,6 +94,18 @@ int main(int argc, char *argv[])
 											putchar(linea[i]);
 										}
 									}
+
+									time_t t = time(NULL);
+									struct tm tm = *localtime(&t);
+									int mes  = tm.tm_mon + 1;
+								    int dia  = tm.tm_mday;
+								    int hora = tm.tm_hour;
+								    int min  = tm.tm_min;
+								    int seg  = tm.tm_sec;
+
+									file = fopen("Bitacora.txt", "a+");
+					                fprintf(file, "%d leyendo el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
+					                fclose(file);
 									printf("\n\n");                                    
                                 }
                                 sleep(readTime);
@@ -98,6 +118,22 @@ int main(int argc, char *argv[])
                         }
                         printf("\n\n");
                         sleep(sleepTime);
+	                }
+	                else
+	                {
+	                	time_t t = time(NULL);
+	                	struct tm tm = *localtime(&t);
+	                	int mes  = tm.tm_mon + 1;
+					    int dia  = tm.tm_mday;
+					    int hora = tm.tm_hour;
+					    int min  = tm.tm_min;
+					    int seg  = tm.tm_sec;
+
+	                	file = fopen("Bitacora.txt", "a+");
+		                fprintf(file, "%d lector bloqueado el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
+		                fclose(file);
+		                printf("Zona critica en uso\n\n");
+		                sleep(sleepTime);
 	                }
 		                
 		        }
