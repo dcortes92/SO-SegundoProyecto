@@ -10,6 +10,8 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 int readTime;          /*Tiempo que se le asigna a un proceso para que
                                  lea en la memoria compartida, segundos */
 
+void imprimir_linea(char *linea);
+
 //int status;
 
 int main(int argc, char *argv[])
@@ -33,15 +35,10 @@ int main(int argc, char *argv[])
 		    }
 		    if (pid == 0) /*Child*/
 		    {
-		        while(1)
-		        {
-	                printf("***** Proceso %d leyendo ******\n\n", getpid());
+		        
 	                int shmid;
 	                key_t key;
 	                char *shm, *s;
-
-	                int *shm1;
-
 	                /*
 	                * We need to get the segment named
 	                * "5678", created by the server.
@@ -66,35 +63,39 @@ int main(int argc, char *argv[])
 	                 return -1;
 	                }
 
-
-	                s = 0;                        
+	            while(1)
+		        {
+	                s = shm;
 	                if (*s == '0')
 	                {
-                        int i = 0;
                         int j = 0;
                         char linea[30];
                         
-                        for (s = (shm + 1); *s != NULL; s++)
+                        for (s = shm + 1; *s != NULL; s++)
                         {
                             if (j == 30)
                             {
+                            	printf("\nj = 30\n");
                                 j = 0;
                                 if(linea[0] != 'X')
                                 {
+                                	printf("****** Proceso %d leyendo ******\n\n", getpid());
+                                	int i;
+									for (i = 0; i < 30; i++)
+									{
+										if (linea[i] != 'X')
+										{
+											putchar(linea[i]);
+										}
+									}
+									printf("\n");
                                     sleep(readTime);
-                                    printf("%s\n", linea);
-                                    i++;
                                 }
                             }
-                            linea[i] = *s;
-                            //putchar(*s);
+                            linea[j] = *s;
                             j++;
                         }
                         printf("\n\n");
-                        sleep(sleepTime);
-	                }
-	                else
-	                {
                         sleep(sleepTime);
 	                }
 		                
@@ -114,4 +115,11 @@ int main(int argc, char *argv[])
 	{
 		    printf("Faltan parámetros para iniciar el programa.\n");
 	}
+}
+
+
+void imprimir_linea(char *linea)
+{
+	
+	printf("\n");
 }

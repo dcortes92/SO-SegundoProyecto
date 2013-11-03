@@ -1,4 +1,6 @@
 #include "librerias.h"
+#include <time.h>
+
 
 /*Parámetros para el Writer, todos son obligatorios.*/
 
@@ -9,6 +11,10 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 
 int writeTime;          /*Tiempo que se le asigna a un proceso para que
                                  escriba en la memoria compartida, segundos*/
+
+void procesar_linea(char *s, int numeroLinea);
+void procesar_pid(char *s, int pid);
+void procesar_fecha(char *s);
 
 //int status;
 
@@ -59,23 +65,30 @@ int main(int argc, char *argv[])
 
                 while(1)
                 {                
-                    s = 0;                        
+                    s = shm;            
                     if (*s == '0')
                     {
                         /*SE SOLICITA EL SEMAFORO*/
                         *s = '1';
-                        printf("***** Proceso %d leyendo ******\n\n", getpid());
+                        printf("El semaforo ya es mio\n");
         
                         int j = 0;
                         char linea[30];
                         
-                        for (s = (shm + 1); *s != NULL; s++)
+                        for (s = shm + 1; *s != NULL; s++)
                         {
                             if (*s == 'X')
                             {
-                             	*s = 'R';
-                             	/*ESCRIBIR LA LINEA*/
+                                printf("****** Proceso %d escribiendo ******\n\n", getpid());
+
+                                procesar_linea(s, j);                             	
+
+                                procesar_pid(s, getpid());
+
+                                procesar_fecha(s);
+
                              	sleep(writeTime);
+                                break;
                             }
                             else
                             {
@@ -84,15 +97,12 @@ int main(int argc, char *argv[])
                             }
                         }
                         /*SE LIBERA EL SEMAFORO*/
-                        s = 0;
+                        s = shm;
                         *s = '0';
+                        printf("El semaforo ya es libre\n");
                         printf("\n\n");
                         sleep(sleepTime);
-                    }
-                    else
-                    {
-                    	sleep(sleepTime);
-                    }                                        
+                    }                                       
                 }
             }
         }
@@ -108,28 +118,93 @@ int main(int argc, char *argv[])
     }
 }
 
-void agregarCeros(int numeroLinea)
+void procesar_linea(char *s, int numeroLinea)
 {
-    int cantidadLineas = 10;
-    int i = 0;
-    while(cantidadLineas != 0)
-    {
-        i++;
-        cantidadLineas = cantidadLineas/10;
-    }
+    int x1 = numeroLinea / 100;
 
-    int j = 0;
-    while(numeroLinea != 0)
-    {
-        j++;
-        numeroLinea = numeroLinea/10;
-    }        
+    int nuevo = numeroLinea - 100*x1;
+    int x2 = nuevo / 10;
 
-    int diferencia = i - j;
+    nuevo = nuevo - 10*x2;
+    int x3 = nuevo;
 
-    char numero[diferencia];
-    for (i = 0; i < diferencia; ++i)
-    {
-        numero[i] = '0';
-    }
+    *s++ = '#';
+    *s++ = x1 + 48;
+    *s++ = x2 + 48;
+    *s++ = x3 + 48;
+    *s++ = '.';
+    *s++ = ' ';
+}
+
+void procesar_pid(char *s, int pid)
+{
+    int x1 = pid / 1000;
+    int xn1 = pid - 1000*x1;
+
+    int x2 = xn1 / 100;
+    int xn2 = xn1 - 100*x2;
+
+    int x3 = xn2 / 10;
+    int xn3 = xn2 - 10*x3;
+    
+    int x4 = xn3;
+
+    *s++ = x1 + 48;
+    *s++ = x2 + 48;
+    *s++ = x3 + 48;
+    *s++ = x4 + 48;
+    *s++ = ' ';
+}
+
+void procesar_fecha(char *s)
+{
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    int mes  = tm.tm_mon + 1;
+    int dia  = tm.tm_mday;
+    int hora = tm.tm_hour;
+    int min  = tm.tm_min;
+    int seg  = tm.tm_sec;
+
+
+    /*AGREGAR EL DIA*/
+    int d1 = dia / 10;
+    int d2 = dia - 10*d1;
+    *s++ = d1 + 48;
+    *s++ = d2 + 48;
+    *s++ = '-';
+
+    /*AGREGAR EL MES*/
+    int m1 = mes / 10;
+    int m2 = mes - 10*m1;
+    *s++ = m1 + 48;
+    *s++ = m2 + 48;
+    *s++ = '-';
+    *s++ = '2';
+    *s++ = '0';
+    *s++ = '1';
+    *s++ = '3';
+    *s++ = ' ';
+
+    /*AGREGAR EL HORA*/
+    int h1 = hora / 10;
+    int h2 = hora - 10*m1;
+    *s++ = h1 + 48;
+    *s++ = h2 + 48;
+    *s++ = ':';
+
+    /*AGREGAR EL MIN*/
+    int min1 = min / 10;
+    int min2 = min - 10*min1;
+    *s++ = min1 + 48;
+    *s++ = min2 + 48;
+    *s++ = ':';
+
+    /*AGREGAR EL SEG*/
+    int s1 = seg / 10;
+    int s2 = seg - 10*s1;
+    *s++ = s1 + 48;
+    *s++ = s2 + 48;
+    *s++ = ' ';
 }

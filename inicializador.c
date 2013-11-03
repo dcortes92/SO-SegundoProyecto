@@ -48,6 +48,12 @@ int crearMemoria()
 	* other process to read.
 	*/
     s = shm;
+    *s = '0';
+    s++;
+    int i;
+    for (i = 1; i < tamanio_mem; i++)
+        *s++ = 'X';
+
 	*s = '0';
 	s++;
     int i;
