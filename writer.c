@@ -232,7 +232,7 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 	key = 5678;
 
 	int num_lineas = 10;
-	int tamanio_mem = num_lineas*30 + 2;
+	int tamanio_mem = 10*30 + 2;
 
 	/*
 	* Se localiza el segmento.
@@ -253,5 +253,6 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 
 int memoriaVacia()
 {
+	
 	return 0;
 }
