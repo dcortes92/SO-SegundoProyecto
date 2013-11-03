@@ -15,7 +15,7 @@ int main()
     key = 1234;
 
     int num_lineas = 10;
-    int tamanio_mem = num_lineas*30 + 1;
+    int tamanio_mem = num_lineas*30 + 2;
     /*
 * Create the segment.
 */
@@ -37,10 +37,14 @@ int main()
 * other process to read.
 */
     s = shm;
-
+	*s = '0';
+	s++;
     int i;
     for (i = 0; i < tamanio_mem; i++)
-        *s++ = 'X';
+    	if( i == tamanio_mem)
+    		*s++ = '\0';	
+    	else
+        	*s++ = 'X';
 
     return 1;
 }
