@@ -26,7 +26,7 @@ void main()
 		switch(option)
 		{
 			case 0:
-				printf("Estado de la memoria");
+				printf("Estado de la memoria\n");
 				estadoMemoria();
 			break;
 			
@@ -60,15 +60,15 @@ int estadoMemoria()
     key_t key;
     char *shm, *s;
     /*
-    * We need to get the segment named
-    * "5678", created by the server.
+    * Obtenemos el segmento de memoria llamado
+    * "1234", creado por inicializador.
     */
     key = 1234;
 
     int num_lineas = 10;
     int tamanio_mem = num_lineas*30 + 1;
     /*
-    * Locate the segment.
+    * Se localiza el segmento.
     */
     if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
     	perror("shmget");
@@ -76,22 +76,34 @@ int estadoMemoria()
     }
 
     /*
-    * Now we attach the segment to our data space.
+    * Se adjunta el segmento al espacio de datos en memoria.
     */
     if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
      perror("shmat");
      return -1;
     }
     
-    printf("\n\n");
-    int i;
-    for (s = shm; *s != NULL; s++)
+    /* Se imprime el contenido de la memoria en formato entendible */
+    int j = 0;
+    char linea[30];
+    
+    for (s = shm + 1; *s != NULL; s++)
     {
-    	for (i = 0; i < 30; i++)
-		{
-			putchar(*s);
-		}
-		printf("\n");
+        if (j == 30)
+        {
+            j = 0;	
+			int i;
+			for (i = 0; i < 30; i++)
+			{
+				putchar(linea[i]);
+			}
+			printf("\n");
+        }
+        else
+        {
+            linea[j] = *s;
+            j++;
+        }
     }
     
     printf("\n\n");

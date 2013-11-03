@@ -36,33 +36,36 @@ int main(int argc, char *argv[])
 		    if (pid == 0) /*Child*/
 		    {
 		        
-	                int shmid;
-	                key_t key;
-	                char *shm, *s;
-	                /*
-	                * We need to get the segment named
-	                * "5678", created by the server.
-	                */
-	                key = 1234;
+                int shmid;
+                key_t key;
+                char *shm, *s;
+                
+                /*
+                * Obtenemos el segmento llamado
+                * "1234", creado por el inicializador.
+                */
+                key = 1234;
 
-	                int num_lineas = 10;
-	                int tamanio_mem = num_lineas*30 + 1;
-	                /*
-	                * Locate the segment.
-	                */
-	                if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
-	                	perror("shmget");
-	                	return -1;
-	                }
+                int num_lineas = 10;
+                int tamanio_mem = num_lineas*30 + 1;
+                
+                /*
+                * Se localiza el segmento.
+                */
+                if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
+                	perror("shmget");
+                	return -1;
+                }
 
-	                /*
-	                * Now we attach the segment to our data space.
-	                */
-	                if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
-	                 perror("shmat");
-	                 return -1;
-	                }
-
+                /*
+                * Se adjunta el segmento al espacio de datos en memoria.
+                */
+                if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
+                 perror("shmat");
+                 return -1;
+                }
+                
+                /* Se imprime el contenido del segmento */
 	            while(1)
 		        {
 		        	/*SE SOLICITA EL SEMAFORO*/

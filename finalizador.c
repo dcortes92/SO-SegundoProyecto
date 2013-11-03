@@ -7,6 +7,10 @@ int main()
     key_t key;
     char *shm;
     
+    /*
+    * Obtenemos el segmento llamado
+    * "1234", creado por el inicializador.
+    */
     key = 1234;
     
     int num_lineas = 10;
@@ -17,19 +21,25 @@ int main()
 		return -1;
 	}
 
-    /*
-* Now we attach the segment to our data space.
-*/
+	/*
+    * Se localiza el segmento.
+    */
     if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
         perror("shmat");
         return -1;
     }
-    
+ 
+ 	/*
+ 	* Se quita el segmento del espacio de datos en memoria
+ 	*/   
     if (shmdt(shm) == -1) {
         fprintf(stderr, "shmdt failed\n");
         return -1;
     }
 
+	/*
+ 	* Se libera el segmento de memoria
+ 	*/   
     if (shmctl(shmid, IPC_RMID, 0) == -1) {
         fprintf(stderr, "shmctl(IPC_RMID) failed\n");
         return -1;
