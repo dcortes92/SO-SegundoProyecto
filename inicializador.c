@@ -9,7 +9,7 @@ int crearMemoriaEspia(void);
 void main()
 {
     crearMemoria();
-	crearMemoriaEspia();
+	//crearMemoriaEspia();
 }
 
 int crearMemoria()
