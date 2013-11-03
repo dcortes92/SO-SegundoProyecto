@@ -131,6 +131,9 @@ int main(int argc, char *argv[])
 					                fclose(file);
 
 									printf("\n\n");
+									
+									/*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
+                                	//actualizar_espia(getpid(), 'e', 'a', 1);
 									break;                                 
                                 }
                                 sleep(readTime);
@@ -161,6 +164,8 @@ int main(int argc, char *argv[])
 		                fprintf(file, "%d egoista bloqueado el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
 		                fclose(file);
 		                printf("Zona critica en uso\n\n");
+		                /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
+                        //actualizar_espia(getpid(), 'e', 'b', 0);
 		                sleep(sleepTime);
 	                }
 		                

@@ -105,7 +105,9 @@ int main(int argc, char *argv[])
 									file = fopen("Bitacora.txt", "a+");
 					                fprintf(file, "%d leyendo el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
 					                fclose(file);
-									printf("\n\n");                                    
+									printf("\n\n");
+									/*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
+                                	//actualizar_espia(getpid(), 'r', 'a', 1);
                                 }
                                 sleep(readTime);
                             }
@@ -132,6 +134,8 @@ int main(int argc, char *argv[])
 		                fprintf(file, "%d lector bloqueado el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
 		                fclose(file);
 		                printf("Zona critica en uso\n\n");
+		                /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
+                        //actualizar_espia(getpid(), 'r', 'b', 0);
 		                sleep(sleepTime);
 	                }
 		                

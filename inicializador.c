@@ -14,7 +14,7 @@ void main(int argc, char *argv[])
 	{	
 		crearMemoria();
 		int cantidadProcesos = atoi(argv[1]);
-		//crearMemoriaEspia(cantidadProcesos);	
+		crearMemoriaEspia(cantidadProcesos);	
 	}
 	else
 	{
@@ -92,6 +92,7 @@ int crearMemoriaEspia(int cantidadProcesos)
 	*/
     if ((shmid = shmget(key, tamanio_mem, IPC_CREAT | 0666)) < 0) {
         perror("shmget");
+        printf("Error creando el segmento de espia\n");
         return -1;
     }
 
@@ -100,6 +101,7 @@ int crearMemoriaEspia(int cantidadProcesos)
 	*/
     if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
         perror("shmat");
+        printf("Error adjuntando el segmento de espia\n");
         return -1;
     }
 

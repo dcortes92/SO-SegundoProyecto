@@ -15,10 +15,12 @@ int writeTime;          /*Tiempo que se le asigna a un proceso para que
 pid_t pid;
 int shmid;
 key_t key;
-char *shm, *s;
+char *shm, *s, *espia;
 
 void procesar_linea(int numeroLinea);
 void procesar_pid(int pid);
+void procesar_pid_espia(int pid);
+void procesar_resto_espia(char tipo, char estado, int flagArchivo);
 void procesar_fecha();
 void actualizar_espia(int pid, char tipo, char estado, int flagArchivo);
 int cantidad_procesos(); //retorna la cantidad de readers, writers, readers egoistas corriendo
@@ -87,9 +89,6 @@ int main(int argc, char *argv[])
                             if (*s == 'X')
                             {
                                 printf("****** Proceso %d escribiendo ******\n\n", getpid());
-                                
-                                /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
-                                //actualizar_espia(getpid(), 'w', 'a', 1);
 
                                 procesar_linea(j);
                                 int pid_f = getpid();
@@ -107,7 +106,10 @@ int main(int argc, char *argv[])
                                 file = fopen("Bitacora.txt", "a+");
                                 fprintf(file, "%d escribiendo el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
                                 fclose(file);
-                                printf("\n\n"); 
+                                printf("\n\n");
+                                
+                                /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
+                                //actualizar_espia(getpid(), 'w', 'a', 1);
 
                              	sleep(writeTime);
                                 break;
@@ -138,6 +140,9 @@ int main(int argc, char *argv[])
                         fprintf(file, "%d bloqueado el %d-%d-2013 %d:%d%d\n", getpid(), dia, mes, hora, min, seg);
                         fclose(file);
                         printf("Zona critica en uso\n\n");
+                        
+                        /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
+                        //actualizar_espia(getpid(), 'w', 'b', 0);
                         sleep(sleepTime);
                     }                               
                 }
@@ -255,7 +260,7 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 {
 	int shmid;
 	key_t key;
-	char *shm, *s; 
+	char *shm;
 	
 	int num_lineas = cantidad_procesos(); //se lee el archivo con la cantidad de procesos en ejecución.
 	int tamanio_mem = num_lineas*30 + 2;
@@ -285,13 +290,13 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 	/* Se busca el pid en la memoria del espia para escribir en esa linea */
 	
 	int i = 0;
-	s = shm + 1;
+	espia = shm + 1;
 	for (i = 0; i < num_lineas; i++)
 	{
-		char c1 = *s;
-		char c2 = *s+1;
-		char c3 = *s+2;
-		char c4 = *s+3;
+		char c1 = *espia;
+		char c2 = *espia+1;
+		char c3 = *espia+2;
+		char c4 = *espia+3;
 	
 		char read_pid[5] = {c1, c2, c3, c4, '\0'};
 	
@@ -299,18 +304,39 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 	
 		if(currentpid == pid)
 		{
-			
+			procesar_pid_espia(pid);
+			procesar_resto_espia(tipo, estado, flagArchivo);
 		}
 		else
 		{
-			*s = *s+10;
+			*espia = *espia+10;
 		}
 	}
 	
 	/* En caso de no encontrarlo se escribe en cualquier linea de la memoria */
-	
-	s = shm + 1;
-	
+	espia = shm;            
+    if (*espia == '0')
+    {
+        /*SE SOLICITA EL SEMAFORO*/
+        *espia = '1';
+
+        int j = 0;
+        char linea[30];
+        
+        for (espia = shm + 1; *s != '\0'; s++)
+        {
+            if (*espia == 'X')
+            {
+            	procesar_pid_espia(pid);
+				procesar_resto_espia(tipo, estado, flagArchivo);
+            }
+            else
+            {
+                j++;
+                espia += 10;
+            }
+        }
+     }
 }
 
 int cantidad_procesos() 
@@ -323,4 +349,35 @@ int cantidad_procesos()
 	fclose(fp);
 	
 	return atoi(buffer);
+}
+
+void procesar_pid_espia(int pid)
+{
+    int x1 = pid / 1000;
+    int xn1 = pid - 1000*x1;
+
+    int x2 = xn1 / 100;
+    int xn2 = xn1 - 100*x2;
+
+    int x3 = xn2 / 10;
+    int xn3 = xn2 - 10*x3;
+    
+    int x4 = xn3;
+
+    printf("%d%d%d%d ", x1, x2, x3, x4);
+
+    *espia++ = x1 + 48;
+    *espia++ = x2 + 48;
+    *espia++ = x3 + 48;
+    *espia++ = x4 + 48;
+    *espia++ = ' ';
+}
+
+void procesar_resto_espia(char tipo, char estado, int flagArchivo)
+{
+	*espia++ = tipo;
+	*espia++ = ' ';
+	*espia++ = estado;
+	*espia++ = ' ';
+	*espia++ = flagArchivo;
 }
