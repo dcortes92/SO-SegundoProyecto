@@ -22,6 +22,7 @@ void procesar_linea(int numeroLinea);
 void procesar_pid(int pid);
 void procesar_fecha();
 void actualizar_espia(int pid, char tipo, char estado, int flagArchivo);
+int memoriaVacia();
 
 //int status;
 
@@ -248,4 +249,9 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 		perror("shmat");
 		return;
 	}
+}
+
+int memoriaVacia()
+{
+	return 0;
 }
