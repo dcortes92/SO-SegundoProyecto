@@ -12,17 +12,16 @@ int sleepTime;          /*Tiempo en que duerme un proceso cuando no está
 int writeTime;          /*Tiempo que se le asigna a un proceso para que
                                  escriba en la memoria compartida, segundos*/
 
-
+pid_t pid;
 int shmid;
 key_t key;
 char *shm, *s;
-
 
 void procesar_linea(int numeroLinea);
 void procesar_pid(int pid);
 void procesar_fecha();
 void actualizar_espia(int pid, char tipo, char estado, int flagArchivo);
-int memoriaVacia();
+int cantidad_procesos(); //retorna la cantidad de readers, writers, readers egoistas corriendo
 
 //int status;
 
@@ -36,7 +35,7 @@ int main(int argc, char *argv[])
         writeTime = atoi(argv[3]);
         
         int i;
-        pid_t pid;
+
         for (i = 0; i < numberOfWriters; i++)
         {
             pid = fork();
@@ -85,13 +84,11 @@ int main(int argc, char *argv[])
                                 printf("****** Proceso %d escribiendo ******\n\n", getpid());
                                 
                                 /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
-                                actualizar_espia(getpid(), 'w', 'a', 1);
+                                //actualizar_espia(getpid(), 'w', 'a', 1);
 
-                                procesar_linea(j);       	
-
+                                procesar_linea(j);
                                 int pid_f = getpid();
                                 procesar_pid(pid_f);
-
                                 procesar_fecha();
 
                              	sleep(writeTime);
@@ -108,7 +105,7 @@ int main(int argc, char *argv[])
                         *s = '0';
                         printf("\n\n");
                         sleep(sleepTime);
-                    }                                       
+                    }               
                 }
             }
         }
@@ -224,15 +221,16 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 {
 	int shmid;
 	key_t key;
-	char *shm, *s;
+	char *shm, *s; 
+	
+	int num_lineas = cantidad_procesos(); //se lee el archivo con la cantidad de procesos en ejecución.
+	int tamanio_mem = num_lineas*30 + 2;
+	
 	/*
 	* Obtenemos el segmento llamado
 	* "5678", creado por el inicializador.
 	*/
-	key = 5678;
-
-	int num_lineas = 10;
-	int tamanio_mem = 10*30 + 2;
+	key = 5678;	
 
 	/*
 	* Se localiza el segmento.
@@ -249,10 +247,46 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 		perror("shmat");
 		return;
 	}
+	
+	/* Se busca el pid en la memoria del espia para escribir en esa linea */
+	
+	int i = 0;
+	s = shm + 1;
+	for (i = 0; i < num_lineas; i++)
+	{
+		char c1 = *s;
+		char c2 = *s+1;
+		char c3 = *s+2;
+		char c4 = *s+3;
+	
+		char read_pid[5] = {c1, c2, c3, c4, '\0'};
+	
+		int currentpid = atoi(read_pid);
+	
+		if(currentpid == pid)
+		{
+			
+		}
+		else
+		{
+			*s = *s+10;
+		}
+	}
+	
+	/* En caso de no encontrarlo se escribe en cualquier linea de la memoria */
+	
+	s = shm + 1;
+	
 }
 
-int memoriaVacia()
+int cantidad_procesos() 
 {
+	FILE *fp;
+	char buffer[2];
+
+	fp = fopen("cantidadProcesos.txt", "r");
+	fscanf(fp, "%s", buffer);
+	fclose(fp);
 	
-	return 0;
+	return atoi(buffer);
 }

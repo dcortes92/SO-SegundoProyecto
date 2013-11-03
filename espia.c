@@ -85,20 +85,27 @@ int estadoMemoria()
     
     /* Se imprime el contenido de la memoria en formato entendible */
     int contador = 0;     
-    
+    char linea[30];
+    int i;
     for (s = shm + 1; *s != '\0'; s++)
     {
 		if(contador == 30)
 		{
+			for (i = 0; i < 30; i++)
+			{
+				putchar(linea[i]);
+			}
 			printf("\n");
 			contador = 0;
 		}
 		else
 		{
-			putchar(*s);	    
+		 	linea[contador] = *s;    
 	    	contador++;
 		}        
     }
+    
+    printf("\n\n");
 }
 
 int estadoReaders(int esEgoista)

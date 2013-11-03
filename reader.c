@@ -69,9 +69,8 @@ int main(int argc, char *argv[])
 	                {
                         int j = 0;
                         char linea[30];
-                        
                         for (s = shm + 1; *s != '\0'; s++)
-                        {
+                        {	
                             if (j == 30)
                             {
                                 j = 0;

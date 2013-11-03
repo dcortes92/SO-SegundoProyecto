@@ -117,4 +117,12 @@ int crearMemoriaEspia(int cantidadProcesos)
     	else
         	*s++ = 'X';
     }
+    
+    /* Finalmente se guarda en un archivo la cantidad de procesos 
+       para que otros puedan saberlo*/
+       
+    FILE *fp;
+	fp=fopen("cantidadProcesos.txt", "w");
+	fprintf(fp, "%d", cantidadProcesos);
+	fclose(fp);
 }
