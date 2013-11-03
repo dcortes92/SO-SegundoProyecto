@@ -10,7 +10,7 @@ void estadoReaders(int esEgoista);
 /* Estado de los writers */
 void estadoWriters();
 
-int main()
+void main()
 {
 	int option;
 	int loop = 1;
@@ -48,9 +48,23 @@ int main()
 			
 			default:
 				printf("Opcion incorrecta\a");
-			break;
-			
+			break;			
 			
 		}		
 	}
+}
+
+void estadoMemoria()
+{
+	
+}
+
+void estadoReaders(int esEgoista)
+{
+	
+}
+
+void estadoWriters()
+{
+	
 }
