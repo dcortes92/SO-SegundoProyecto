@@ -3,12 +3,7 @@
 /* Estado de la memoria compartida, imprime todo */
 int estadoMemoria();
 
-/* Estado de los readers, recibe una bandera en
-   caso de que se solicite el estado de los egoistas */
-int estadoReaders(int esEgoista);
-
-/* Estado de los writers */
-int estadoWriters();
+int estadoProcesos();
 
 int cantidad_procesos();
 
@@ -20,7 +15,7 @@ void main()
 	while(loop)
 	{
 		printf("*** Espia ***\n\n");
-		printf("0. Estado de la memoria\n1. Estado de los readers\n2. Estado de los readers egoistas\n3. Estado de los writers\n4. Salir");
+		printf("0. Estado de la memoria\n1. Estado de los procesos\n2. Salir");
 		printf("\n\n");
 		
 		scanf("%d", &option);
@@ -33,19 +28,11 @@ void main()
 			break;
 			
 			case 1:
-				printf("Estado de los readers\n");
-				estadoReaders(0);
+				printf(" ****** Estado de los procesos ******\n");
+				estadoProcesos();
 			break;
 			
 			case 2:
-				printf("Estado de los readers egoistas");
-			break;
-			
-			case 3:
-				printf("Estado de los writers");
-			break;
-			
-			case 4:
 				loop = 0;
 			break;
 			
@@ -107,11 +94,9 @@ int estadoMemoria()
 	    	contador++;
 		}        
     }
-    
-    printf("\n\n");
 }
 
-int estadoReaders(int esEgoista)
+int estadoProcesos()
 {
 	int shmid;
     key_t key;
@@ -140,16 +125,29 @@ int estadoReaders(int esEgoista)
      return -1;
     }
     
+    printf("\n PID\tTipo\tEstado\tUsando memoria\n");
     /* Se imprime el contenido de la memoria en formato entendible */
     int contador = 0;     
     char linea[10];
     int i;
+    printf(" ");
     for (s = shm + 1; *s != '\0'; s++)
     {
 		if(contador == 10)
 		{
 			for (i = 0; i < 10; i++)
 			{
+				if(i > 3)
+				{
+					if(linea[i] != ' ')
+					{
+						printf("\t");
+					}
+					else
+					{
+						continue;
+					}
+				}
 				putchar(linea[i]);
 			}
 			printf("\n");
@@ -162,12 +160,9 @@ int estadoReaders(int esEgoista)
 		}        
     }
     
-    printf("\n\n");
-}
-
-int estadoWriters()
-{
-	
+    printf(" Tipo: w = writer, r = reader, e = reader egoista\n");
+    printf(" Estado: a = activo, b = bloqueado / durmiendo\n");
+    printf(" Usando memoria: 1 = usando memoria compartida, 0 = no esta usando memoria compartida\n\n");
 }
 
 int cantidad_procesos() 
