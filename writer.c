@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
                 
                 key = 1234;
 
-                int num_lineas = 10;
+                int num_lineas = cantidad_lineas();
                 int tamanio_mem = num_lineas*30 + 2;
 
                 if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
@@ -391,4 +391,16 @@ void procesar_resto_espia(char tipo, char estado, int flagArchivo)
 	*espia++ = estado;
 	*espia++ = ' ';
 	*espia++ = flagArchivo + 48;
+}
+
+int cantidad_lineas() 
+{
+	FILE *fp;
+	char buffer[2];
+
+	fp = fopen("cantidadLineas.txt", "r");
+	fscanf(fp, "%s", buffer);
+	fclose(fp);
+	
+	return atoi(buffer);
 }

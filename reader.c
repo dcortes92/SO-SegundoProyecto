@@ -20,6 +20,7 @@ void procesar_pid_espia(int pid);
 void procesar_resto_espia(char tipo, char estado, int flagArchivo);
 void actualizar_espia(int pid, char tipo, char estado, int flagArchivo);
 int cantidad_procesos(); //retorna la cantidad de readers, writers, readers egoistas corriendo
+int cantidad_lineas();
 
 int main(int argc, char *argv[])
 {
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
                 */
                 key = 1234;
 
-                int num_lineas = 10;
+                int num_lineas = cantidad_lineas();
                 int tamanio_mem = num_lineas*30 + 2;
                 
                 /*
@@ -298,4 +299,16 @@ void procesar_resto_espia(char tipo, char estado, int flagArchivo)
 	*espia++ = estado;
 	*espia++ = ' ';
 	*espia++ = flagArchivo + 48;
+}
+
+int cantidad_lineas() 
+{
+	FILE *fp;
+	char buffer[2];
+
+	fp = fopen("cantidadLineas.txt", "r");
+	fscanf(fp, "%s", buffer);
+	fclose(fp);
+	
+	return atoi(buffer);
 }

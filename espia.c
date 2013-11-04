@@ -7,6 +7,8 @@ int estadoProcesos();
 
 int cantidad_procesos();
 
+int cantidad_lineas();
+
 void main()
 {
 	int option;
@@ -55,7 +57,7 @@ int estadoMemoria()
     */
     key = 1234;
 
-    int num_lineas = 10;
+    int num_lineas = cantidad_lineas();
     int tamanio_mem = num_lineas*30 + 2;
     /*
     * Se localiza el segmento.
@@ -171,6 +173,18 @@ int cantidad_procesos()
 	char buffer[2];
 
 	fp = fopen("cantidadProcesos.txt", "r");
+	fscanf(fp, "%s", buffer);
+	fclose(fp);
+	
+	return atoi(buffer);
+}
+
+int cantidad_lineas() 
+{
+	FILE *fp;
+	char buffer[2];
+
+	fp = fopen("cantidadLineas.txt", "r");
 	fscanf(fp, "%s", buffer);
 	fclose(fp);
 	

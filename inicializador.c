@@ -1,19 +1,20 @@
 #include "librerias.h"
 
 /* Memoria compartida */
-int crearMemoria(void);
+int crearMemoria(int cantidadLineas);
 /* Memoria compartida del espia */
 int crearMemoriaEspia(int cantidadProcesos);
 
 void main(int argc, char *argv[])
 {
-	/*Se espera 1 parámetro además del programa a ejecutar
+	/*Se esperan 2 parámetros además del programa a ejecutar
 	  para determinar el tamaño de la memoria compartida para
-	  el espía*/
-	if(argc == 2) 
+	  el espía y la cantidad de lineas de memoria compartida.*/
+	if(argc == 3) 
 	{	
-		crearMemoria();
-		int cantidadProcesos = atoi(argv[1]);
+		int cantidadProcesos = atoi(argv[2]);
+		int cantidadLineas = atoi(argv[1]);
+		crearMemoria(cantidadLineas);		
 		crearMemoriaEspia(cantidadProcesos);	
 	}
 	else
@@ -22,7 +23,7 @@ void main(int argc, char *argv[])
 	}
 }
 
-int crearMemoria()
+int crearMemoria(int cantidadLineas)
 {
 	char c;
     int shmid;
@@ -35,8 +36,7 @@ int crearMemoria()
 	*/
     key = 1234;
 
-    int num_lineas = 10;
-    int tamanio_mem = num_lineas*30 + 2;
+    int tamanio_mem = cantidadLineas*30 + 2;
     
     /*
 	* Se crea el segmento.
@@ -69,6 +69,14 @@ int crearMemoria()
     	else
         	*s++ = 'X';
     }
+    
+    /* Finalmente se guarda en un archivo la cantidad de procesos 
+       para que otros puedan saberlo*/
+       
+    FILE *fp;
+	fp=fopen("cantidadLineas.txt", "w");
+	fprintf(fp, "%d", cantidadLineas);
+	fclose(fp);
 }
 
 /*Esta memoria sirve para que los demás procesos escriban en ella y el espia sepa que estan haciendo*/

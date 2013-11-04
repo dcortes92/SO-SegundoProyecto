@@ -3,6 +3,7 @@
 void liberar_memoria();
 void liberar_memoria_espia();
 int cantidad_procesos();
+int cantidad_lineas();
 
 int main()
 {
@@ -27,6 +28,8 @@ int main()
 	/*Se borran archivos usados durante el proceso*/
 	remove("PIDs.txt");
 	remove("Bitacora.txt");
+	remove("cantidadLineas.txt");
+	remove("cantidadProcesos.txt");
 }
 
 void liberar_memoria()
@@ -41,7 +44,7 @@ void liberar_memoria()
     */
     key = 1234;
     
-    int num_lineas = 10;
+    int num_lineas = cantidad_lineas();
     int tamanio_mem = num_lineas*30 + 1;
     
     if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
@@ -130,6 +133,18 @@ int cantidad_procesos()
 	char buffer[2];
 
 	fp = fopen("cantidadProcesos.txt", "r");
+	fscanf(fp, "%s", buffer);
+	fclose(fp);
+	
+	return atoi(buffer);
+}
+
+int cantidad_lineas() 
+{
+	FILE *fp;
+	char buffer[2];
+
+	fp = fopen("cantidadLineas.txt", "r");
 	fscanf(fp, "%s", buffer);
 	fclose(fp);
 	
