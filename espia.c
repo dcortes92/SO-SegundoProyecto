@@ -160,7 +160,7 @@ int estadoProcesos()
 		}        
     }
     
-    printf(" Tipo: w = writer, r = reader, e = reader egoista\n");
+    printf(" \n\nTipo: w = writer, r = reader, e = reader egoista\n");
     printf(" Estado: a = activo, b = bloqueado / durmiendo\n");
     printf(" Usando memoria: 1 = usando memoria compartida, 0 = no esta usando memoria compartida\n\n");
 }
