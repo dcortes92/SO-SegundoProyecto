@@ -113,7 +113,7 @@ int crearMemoriaEspia(int cantidadProcesos)
 	*s = '0';
 	s++;
     int i;
-    for (i = 0; i < tamanio_mem; i++){
+    for (i = 0; i <= tamanio_mem; i++){
     	if( i == tamanio_mem)
     		*s++ = '\0';	
     	else

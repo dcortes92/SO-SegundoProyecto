@@ -24,6 +24,9 @@ int main()
 
     fclose(file);
 
+	/*Se borran archivos usados durante el proceso*/
+	remove("PIDs.txt");
+	remove("Bitacora.txt");
 }
 
 void liberar_memoria()
@@ -84,10 +87,10 @@ void liberar_memoria_espia()
     * Obtenemos el segmento llamado
     * "5678", creado por el inicializador.
     */
-    key = 1234;
+    key = 5678;
     
     int num_lineas = cantidad_procesos();
-    int tamanio_mem = num_lineas*30 + 1;
+    int tamanio_mem = num_lineas*10 + 2;
     
     if ((shmid = shmget(key, tamanio_mem, 0666)) < 0) {
 		printf("Error creando el segmento del espia para finalizarlo\n");

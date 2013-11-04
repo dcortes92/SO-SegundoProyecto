@@ -148,14 +148,18 @@ int estadoReaders(int esEgoista)
     {
 		if(contador == 10)
 		{
+			for (i = 0; i < 10; i++)
+			{
+				putchar(linea[i]);
+			}
 			printf("\n");
 			contador = 0;
 		}
 		else
 		{
-			contador++;
-			putchar(*s);
-		}
+		 	linea[contador] = *s;    
+	    	contador++;
+		}        
     }
     
     printf("\n\n");

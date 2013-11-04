@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
                                 printf("\n\n");
                                 
                                 /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
-                                //actualizar_espia(getpid(), 'w', 'a', 1);
+                                actualizar_espia(getpid(), 'w', 'a', 1);
 
                              	sleep(writeTime);
                                 break;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
                         printf("Zona critica en uso\n\n");
                         
                         /*Se actualiza el estado del proceso a activo y con acceso a la memoria*/
-                        //actualizar_espia(getpid(), 'w', 'b', 0);
+                        actualizar_espia(getpid(), 'w', 'b', 0);
                         sleep(sleepTime);
                     }                               
                 }
@@ -263,7 +263,7 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 	char *shm;
 	
 	int num_lineas = cantidad_procesos(); //se lee el archivo con la cantidad de procesos en ejecución.
-	int tamanio_mem = num_lineas*30 + 2;
+	int tamanio_mem = num_lineas*10 + 2;
 	
 	/*
 	* Obtenemos el segmento llamado
@@ -290,53 +290,63 @@ void actualizar_espia(int pid, char tipo, char estado, int flagArchivo)
 	/* Se busca el pid en la memoria del espia para escribir en esa linea */
 	
 	int i = 0;
-	espia = shm + 1;
-	for (i = 0; i < num_lineas; i++)
+	espia = shm;
+	int bandera_escritura = 1;
+	
+	if(*espia == '0') //Se pide el semáforo
 	{
-		char c1 = *espia;
-		char c2 = *espia+1;
-		char c3 = *espia+2;
-		char c4 = *espia+3;
-	
-		char read_pid[5] = {c1, c2, c3, c4, '\0'};
-	
-		int currentpid = atoi(read_pid);
-	
-		if(currentpid == pid)
+		*espia = '1';
+		for (espia = shm + 1; *espia != '\0'; espia++)
 		{
-			procesar_pid_espia(pid);
-			procesar_resto_espia(tipo, estado, flagArchivo);
+			char c1 = *espia;
+			*espia++;
+			char c2 = *espia;
+			*espia++;
+			char c3 = *espia;
+			*espia++;
+			char c4 = *espia;
+	
+			char read_pid[5] = {c1, c2, c3, c4, '\0'};
+			
+			*espia--;
+			*espia--;
+			*espia--;
+	
+			int currentpid = atoi(read_pid);
+	
+			if(currentpid == pid)
+			{
+				procesar_pid_espia(pid);
+				procesar_resto_espia(tipo, estado, flagArchivo);
+				bandera_escritura = 0;
+				break; //rompe el ciclo
+			}
 		}
-		else
-		{
-			*espia = *espia+10;
-		}
+		espia = shm;
+		*espia = '0';
 	}
 	
+	
 	/* En caso de no encontrarlo se escribe en cualquier linea de la memoria */
-	espia = shm;            
-    if (*espia == '0')
+    if(bandera_escritura)
     {
-        /*SE SOLICITA EL SEMAFORO*/
-        *espia = '1';
-
-        int j = 0;
-        char linea[30];
-        
-        for (espia = shm + 1; *s != '\0'; s++)
-        {
-            if (*espia == 'X')
-            {
-            	procesar_pid_espia(pid);
-				procesar_resto_espia(tipo, estado, flagArchivo);
-            }
-            else
-            {
-                j++;
-                espia += 10;
-            }
-        }
-     }
+    	if (*espia == '0')
+		{
+		    /*SE SOLICITA EL SEMAFORO*/
+		    *espia = '1';
+		    for (espia = shm + 1; *espia != '\0'; espia++)
+		    {
+		        if (*espia == 'X')
+		        {
+		        	procesar_pid_espia(pid);
+					procesar_resto_espia(tipo, estado, flagArchivo);
+					break; //rompe el ciclo
+		        }
+		    }
+			espia = shm;
+			*espia = '0';
+		}	
+    }
 }
 
 int cantidad_procesos() 
@@ -364,7 +374,7 @@ void procesar_pid_espia(int pid)
     
     int x4 = xn3;
 
-    printf("%d%d%d%d ", x1, x2, x3, x4);
+    //printf("\n PID a espia: %d%d%d%d ", x1, x2, x3, x4);
 
     *espia++ = x1 + 48;
     *espia++ = x2 + 48;
@@ -375,9 +385,10 @@ void procesar_pid_espia(int pid)
 
 void procesar_resto_espia(char tipo, char estado, int flagArchivo)
 {
+	//printf("\n%c %c %d", tipo, estado, flagArchivo);
 	*espia++ = tipo;
 	*espia++ = ' ';
 	*espia++ = estado;
 	*espia++ = ' ';
-	*espia++ = flagArchivo;
+	*espia++ = flagArchivo + 48;
 }
